@@ -1,4 +1,4 @@
-# Assemanagement
+# Assetmanagement
 
 TO DO: 
 - add appropriate attributes to various entitities (.drawio file).

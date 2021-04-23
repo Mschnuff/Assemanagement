@@ -1,0 +1,9 @@
+tabelle tb_NAME
+primärschlüssel pk_NAME   zb. pk_KundeID
+fremdschlüssel fk_NAME
+assoziative entität ae_NAME zb. ae_KneipenGetraenke
+
+tabellen plural
+assoziative entität plural
+attribute singular
+

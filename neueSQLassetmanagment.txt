@@ -1,0 +1,129 @@
+use ITSMT3G2;
+
+CREATE TABLE tb_abteilungen
+(
+   pk_abteilungsID Integer auto_increment,
+   bezeichnung VARCHAR(200),
+   Primary Key (pk_abteilungsID) 
+);
+
+CREATE TABLE tb_personal
+(
+   pk_personalID Integer auto_increment,
+   name VARCHAR(200),
+   jobbezeichnung VARCHAR(200),
+   fk_abteilungsID Integer,
+   Primary Key (pk_personalID),
+   FOREIGN KEY (fk_abteilungsID) REFERENCES tb_abteilungen(pk_abteilungsID) ON UPDATE CASCADE
+);
+ALTER TABLE tb_abteilungen
+ADD fk_personalID Integer,
+ADD FOREIGN KEY (fk_personalID) REFERENCES tb_personal(pk_personalID);
+
+CREATE TABLE tb_schaeden
+(
+   pk_schadenID Integer auto_increment,
+   beschreibung VARCHAR(300),
+   Primary Key (pk_schadenID)
+);
+
+CREATE TABLE tb_assets
+(
+   pk_assetID Integer auto_increment,
+   kategorie VARCHAR(200),
+   bezeichnung VARCHAR(200),
+   lizenzschluessel VARCHAR(200),
+   am_zielort BOOLEAN,
+   fk_abteilungsID Integer,
+   fk_assetID Integer,
+   Primary Key (pk_assetID),
+   FOREIGN KEY (fk_abteilungsID) REFERENCES tb_abteilungen(pk_abteilungsID) ON UPDATE CASCADE,
+   FOREIGN KEY (fk_assetID) REFERENCES tb_assets(pk_assetID) ON UPDATE CASCADE
+);
+
+CREATE TABLE tb_lager
+(
+    pk_lagerID Integer auto_increment,
+    bezeichnung VARCHAR(200),
+    Primary Key (pk_lagerID)
+);
+
+
+CREATE TABLE tb_pakete
+(
+   pk_paketID Integer auto_increment,
+   bezeichnung VARCHAR(300),
+   preis double (6,2),
+   fk_abteilungsID Integer,
+   fk_lagerID Integer,
+   Primary Key (pk_paketID),
+   FOREIGN KEY (fk_abteilungsID) REFERENCES tb_abteilungen(pk_abteilungsID) ON UPDATE CASCADE,
+   FOREIGN KEY (fk_lagerID) REFERENCES tb_lager(pk_lagerID) ON UPDATE CASCADE
+);
+
+CREATE TABLE tb_paket_hat_schaden
+(
+    pk_paket_hat_schaden_ID Integer auto_increment,
+    buchhaltung_informiert BOOLEAN,
+    paket_retour BOOLEAN,
+    fk_schadenID Integer,
+    fk_paketID Integer,
+    fk_personalID Integer,
+    Primary Key (pk_paket_hat_schaden_ID),
+    FOREIGN KEY (fk_schadenID) REFERENCES tb_schaeden(pk_schadenID) ON UPDATE CASCADE,
+    FOREIGN KEY (fk_paketID) REFERENCES tb_pakete(pk_paketID) ON UPDATE CASCADE,
+    FOREIGN KEY (fk_personalID) REFERENCES tb_personal(pk_personalID) ON UPDATE CASCADE
+);
+
+CREATE TABLE tb_barcodes
+(
+   pk_barcodeID Integer auto_increment,
+   fk_paketID Integer,
+   fk_abteilungsID Integer,
+   Primary Key (pk_barcodeID),
+   FOREIGN KEY (fk_paketID) REFERENCES tb_pakete(pk_paketID) ON UPDATE CASCADE,
+   FOREIGN KEY (fk_abteilungsID) REFERENCES tb_abteilungen(pk_abteilungsID) ON UPDATE CASCADE
+);
+
+CREATE TABLE tb_bestelllisten_eintraege
+(
+   pk_bestelllistenID Integer auto_increment,
+   summe double(6,2),
+   datum date,
+   bearbeitet BOOLEAN,
+   fk_assetID Integer,
+   Primary Key (pk_bestelllistenID),
+   FOREIGN KEY (fk_assetID) REFERENCES tb_assets(pk_assetID) ON UPDATE CASCADE
+);
+
+CREATE TABLE tb_lagerlisten_eintraege
+(
+   pk_lagerlistenID Integer auto_increment,
+   fk_barcodeID Integer,
+   fk_PersonalID Integer,
+   fk_assetID Integer,
+   fk_lagerID Integer,
+   Primary Key (pk_lagerlistenID),
+   FOREIGN KEY (fk_assetID) REFERENCES tb_assets(pk_assetID) ON UPDATE CASCADE,
+   FOREIGN KEY (fk_barcodeID) REFERENCES tb_barcodes(pk_barcodeID) ON UPDATE CASCADE,
+   FOREIGN KEY (fk_PersonalID) REFERENCES tb_personal(pk_personalID) ON UPDATE CASCADE,
+   FOREIGN KEY (fk_lagerID) REFERENCES tb_lager(pk_lagerID) ON UPDATE CASCADE
+);
+CREATE TABLE tb_asset_genehmigungen
+(
+    pk_genehmigungsID Integer auto_increment,
+    genehmigt BOOLEAN,
+    grund VARCHAR(200),
+    fk_assetID Integer,
+    Primary Key (pk_genehmigungsID),
+    FOREIGN KEY (fk_assetID) REFERENCES tb_assets(pk_assetID) ON UPDATE CASCADE
+);
+CREATE TABLE tb_lager_mitarbeiter
+(
+    pk_lagermitarbeiterID Integer auto_increment,
+    fk_personalID Integer,
+    fk_lagerID Integer,
+    Primary Key (pk_lagermitarbeiterID),
+    FOREIGN KEY (fk_personalID) REFERENCES tb_personal(pk_personalID) ON UPDATE CASCADE,
+    FOREIGN KEY (fk_lagerID) REFERENCES lager(pk_lagerID) ON UPDATE CASCADE
+);
